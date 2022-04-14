@@ -1,20 +1,7 @@
-torch
-torchvision
-absl-py
-pyparsing
-termcolor
 git+https://github.com/deepmind/dm_control.git
-# git+git://github.com/1nadequacy/dmc2gym.git
+gym
 opencv-python
-pillow
 scikit-image
 scikit-video
-tb-nightly
-tqdm
-imageio
-imageio-ffmpeg
-pygame
-networkx
-dotmap
 dm-env
 matplotlib

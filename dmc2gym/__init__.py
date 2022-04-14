@@ -31,10 +31,10 @@ def make(
             id=env_id,
             entry_point='dmc2gym.wrappers:DMCWrapper',
             kwargs={
-                'domain_name': domain_name,
+                'robot_name': domain_name,
                 'task_name': task_name,
-                'resource_files': resource_files,
-                'img_source': img_source,
+                'distractor_files': resource_files,
+                'distractor_type': img_source,
                 'total_frames': total_frames,
                 'task_kwargs': {
                     'random': seed

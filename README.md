@@ -1,14 +1,7 @@
 # Learning Invariant Representations for Reinforcement Learning without Reconstruction
 
 ## Requirements
-We assume you have access to a gpu that can run CUDA 9.2. Then, the simplest way to install all required dependencies is to create an anaconda environment by running:
-```
-conda env create -f conda_env.yml
-```
-After the installation ends you can activate your environment with:
-```
-source activate dbc
-```
+
 
 ## Instructions
 To train a DBC agent on the `cheetah run` task from image-based observations  run:
