@@ -7,7 +7,6 @@ import os
 import local_dm_control_suite as suite
 from dm_env import specs
 import numpy as np
-import skimage.io
 
 from dmc2gym import natural_imgsource
 
