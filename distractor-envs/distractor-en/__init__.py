@@ -29,12 +29,12 @@ def make(
     if not env_id in gym.envs.registry.env_specs:
         register(
             id=env_id,
-            entry_point='dmc2gym.wrappers:DMCWrapper',
+            entry_point='distractor-en.wrappers:DMCWrapper',
             kwargs={
-                'domain_name': domain_name,
+                'robot_name': domain_name,
                 'task_name': task_name,
-                'resource_files': resource_files,
-                'img_source': img_source,
+                'distractor_files': resource_files,
+                'distractor_type': img_source,
                 'total_frames': total_frames,
                 'task_kwargs': {
                     'random': seed
@@ -49,4 +49,6 @@ def make(
             },
             max_episode_steps=max_episode_steps
         )
-    return gym.make(env_id)
+    env = gym.make(env_id)
+    env.reset()
+    return env

@@ -1,10 +1,12 @@
+import sys
+
+import cv2
 from gym import core, spaces
 import glob
 import os
 import local_dm_control_suite as suite
 from dm_env import specs
 import numpy as np
-import skimage.io
 
 from dmc2gym import natural_imgsource
 
@@ -42,10 +44,10 @@ def _flatten_obs(obs):
 class DMCWrapper(core.Env):
     def __init__(
         self,
-        domain_name,
+        robot_name,
         task_name,
-        resource_files,
-        img_source,
+        distractor_files,
+        distractor_type,
         total_frames,
         task_kwargs=None,
         visualize_reward={},
@@ -62,11 +64,11 @@ class DMCWrapper(core.Env):
         self._width = width
         self._camera_id = camera_id
         self._frame_skip = frame_skip
-        self._img_source = img_source
+        self._img_source = distractor_type
 
         # create task
         self._env = suite.load(
-            domain_name=domain_name,
+            domain_name=robot_name,
             task_name=task_name,
             task_kwargs=task_kwargs,
             visualize_reward=visualize_reward,
@@ -100,23 +102,23 @@ class DMCWrapper(core.Env):
         )
 
         # background
-        if img_source is not None:
+        if distractor_type is not None:
             shape2d = (height, width)
-            if img_source == "color":
+            if distractor_type == "color":
                 self._bg_source = natural_imgsource.RandomColorSource(shape2d)
-            elif img_source == "noise":
+            elif distractor_type == "noise":
                 self._bg_source = natural_imgsource.NoiseSource(shape2d)
             else:
-                files = glob.glob(os.path.expanduser(resource_files))
+                files = glob.glob(os.path.expanduser(distractor_files))
                 assert len(files), "Pattern {} does not match any files".format(
-                    resource_files
+                    distractor_files
                 )
-                if img_source == "images":
+                if distractor_type == "images":
                     self._bg_source = natural_imgsource.RandomImageSource(shape2d, files, grayscale=True, total_frames=total_frames)
-                elif img_source == "video":
+                elif distractor_type == "video":
                     self._bg_source = natural_imgsource.RandomVideoSource(shape2d, files, grayscale=True, total_frames=total_frames)
                 else:
-                    raise Exception("img_source %s not defined." % img_source)
+                    raise Exception("img_source %s not defined." % distractor_type)
 
         # set seed
         self.seed(seed=task_kwargs.get('random', 1))
@@ -126,7 +128,7 @@ class DMCWrapper(core.Env):
 
     def _get_obs(self, time_step):
         if self._from_pixels:
-            obs = self.render(
+            obs = self._render(
                 height=self._height,
                 width=self._width,
                 camera_id=self._camera_id
@@ -188,11 +190,27 @@ class DMCWrapper(core.Env):
         obs = self._get_obs(time_step)
         return obs
 
-    def render(self, mode='rgb_array', height=None, width=None, camera_id=0):
-        assert mode == 'rgb_array', 'only support rgb_array mode, given %s' % mode
+    def _render(self, mode='rgb_array', height=None, width=None, camera_id=0):
+        assert mode == 'rgb_array'
+
         height = height or self._height
         width = width or self._width
         camera_id = camera_id or self._camera_id
         return self._env.physics.render(
             height=height, width=width, camera_id=camera_id
         )
+
+    def render(self, mode='rgb_array', height=None, width=None, camera_id=0):
+        if self._from_pixels:
+            img = self._get_obs(0)
+            img = np.transpose(img, (1, 2, 0))
+        else:
+            img = self._render(mode, height, width, camera_id)
+
+        if mode == 'human':
+            assert self._from_pixels
+            cv2.imshow('debug render', img)
+            cv2.waitKey()
+            print("WARNING: USING RENDER WITH MODE=HUMAN", file=sys.stderr)
+
+        return img
