@@ -21,5 +21,5 @@ setup(
     author="Charlie Gauthier",
     author_email="charlie.gauthier@umontreal.ca",
     license="CC-BY-NC 4.0",
-    install_requires=["dm_control", "gym", "opencv-python", "scikit-image", "scikit-video", "dm-env", 'matplotlib'],
+    install_requires=['wheel', "dm_control", "gym", "opencv-python", "scikit-image", "scikit-video", "dm-env", 'matplotlib'],
 )
