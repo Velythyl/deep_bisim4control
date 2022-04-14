@@ -13,7 +13,6 @@ import time
 import json
 import dmc2gym
 
-import utils
 from logger import Logger
 from video import VideoRecorder
 
@@ -160,162 +159,40 @@ def evaluate(env, agent, video, num_episodes, L, step, device=None, embed_viz_di
         print('---------------------------------')
 
 
-def make_agent(obs_shape, action_shape, args, device):
-    if args.agent == 'baseline':
-        agent = BaselineAgent(
-            obs_shape=obs_shape,
-            action_shape=action_shape,
-            device=device,
-            hidden_dim=args.hidden_dim,
-            discount=args.discount,
-            init_temperature=args.init_temperature,
-            alpha_lr=args.alpha_lr,
-            alpha_beta=args.alpha_beta,
-            actor_lr=args.actor_lr,
-            actor_beta=args.actor_beta,
-            actor_log_std_min=args.actor_log_std_min,
-            actor_log_std_max=args.actor_log_std_max,
-            actor_update_freq=args.actor_update_freq,
-            critic_lr=args.critic_lr,
-            critic_beta=args.critic_beta,
-            critic_tau=args.critic_tau,
-            critic_target_update_freq=args.critic_target_update_freq,
-            encoder_type=args.encoder_type,
-            encoder_feature_dim=args.encoder_feature_dim,
-            encoder_lr=args.encoder_lr,
-            encoder_tau=args.encoder_tau,
-            encoder_stride=args.encoder_stride,
-            decoder_type=args.decoder_type,
-            decoder_lr=args.decoder_lr,
-            decoder_update_freq=args.decoder_update_freq,
-            decoder_weight_lambda=args.decoder_weight_lambda,
-            transition_model_type=args.transition_model_type,
-            num_layers=args.num_layers,
-            num_filters=args.num_filters
-        )
-    elif args.agent == 'bisim':
-        agent = BisimAgent(
-            obs_shape=obs_shape,
-            action_shape=action_shape,
-            device=device,
-            hidden_dim=args.hidden_dim,
-            discount=args.discount,
-            init_temperature=args.init_temperature,
-            alpha_lr=args.alpha_lr,
-            alpha_beta=args.alpha_beta,
-            actor_lr=args.actor_lr,
-            actor_beta=args.actor_beta,
-            actor_log_std_min=args.actor_log_std_min,
-            actor_log_std_max=args.actor_log_std_max,
-            actor_update_freq=args.actor_update_freq,
-            critic_lr=args.critic_lr,
-            critic_beta=args.critic_beta,
-            critic_tau=args.critic_tau,
-            critic_target_update_freq=args.critic_target_update_freq,
-            encoder_type=args.encoder_type,
-            encoder_feature_dim=args.encoder_feature_dim,
-            encoder_lr=args.encoder_lr,
-            encoder_tau=args.encoder_tau,
-            encoder_stride=args.encoder_stride,
-            decoder_type=args.decoder_type,
-            decoder_lr=args.decoder_lr,
-            decoder_update_freq=args.decoder_update_freq,
-            decoder_weight_lambda=args.decoder_weight_lambda,
-            transition_model_type=args.transition_model_type,
-            num_layers=args.num_layers,
-            num_filters=args.num_filters,
-            bisim_coef=args.bisim_coef
-        )
-    elif args.agent == 'deepmdp':
-        agent = DeepMDPAgent(
-            obs_shape=obs_shape,
-            action_shape=action_shape,
-            device=device,
-            hidden_dim=args.hidden_dim,
-            discount=args.discount,
-            init_temperature=args.init_temperature,
-            alpha_lr=args.alpha_lr,
-            alpha_beta=args.alpha_beta,
-            actor_lr=args.actor_lr,
-            actor_beta=args.actor_beta,
-            actor_log_std_min=args.actor_log_std_min,
-            actor_log_std_max=args.actor_log_std_max,
-            actor_update_freq=args.actor_update_freq,
-            encoder_stride=args.encoder_stride,
-            critic_lr=args.critic_lr,
-            critic_beta=args.critic_beta,
-            critic_tau=args.critic_tau,
-            critic_target_update_freq=args.critic_target_update_freq,
-            encoder_type=args.encoder_type,
-            encoder_feature_dim=args.encoder_feature_dim,
-            encoder_lr=args.encoder_lr,
-            encoder_tau=args.encoder_tau,
-            decoder_type=args.decoder_type,
-            decoder_lr=args.decoder_lr,
-            decoder_update_freq=args.decoder_update_freq,
-            decoder_weight_lambda=args.decoder_weight_lambda,
-            transition_model_type=args.transition_model_type,
-            num_layers=args.num_layers,
-            num_filters=args.num_filters
-        )
-
-    if args.load_encoder:
-        model_dict = agent.actor.encoder.state_dict()
-        encoder_dict = torch.load(args.load_encoder) 
-        encoder_dict = {k[8:]: v for k, v in encoder_dict.items() if 'encoder.' in k}  # hack to remove encoder. string
-        agent.actor.encoder.load_state_dict(encoder_dict)
-        agent.critic.encoder.load_state_dict(encoder_dict)
-
-    return agent
 
 
 def main():
     args = parse_args()
     utils.set_seed_everywhere(args.seed)
 
-    if args.domain_name == 'carla':
-        env = CarlaEnv(
-            render_display=args.render,  # for local debugging only
-            display_text=args.render,  # for local debugging only
-            changing_weather_speed=0.1,  # [0, +inf)
-            rl_image_size=args.image_size,
-            max_episode_steps=1000,
-            frame_skip=args.action_repeat,
-            is_other_cars=True,
-            port=args.port
-        )
-        # TODO: implement env.seed(args.seed) ?
+    env = dmc2gym.make(
+        domain_name=args.domain_name,
+        task_name=args.task_name,
+        resource_files=args.resource_files,
+        img_source=args.img_source,
+        total_frames=args.total_frames,
+        seed=args.seed,
+        visualize_reward=False,
+        from_pixels=(args.encoder_type == 'pixel'),
+        height=args.image_size,
+        width=args.image_size,
+        frame_skip=args.action_repeat
+    )
+    env.seed(args.seed)
 
-        eval_env = env
-    else:
-        env = dmc2gym.make(
-            domain_name=args.domain_name,
-            task_name=args.task_name,
-            resource_files=args.resource_files,
-            img_source=args.img_source,
-            total_frames=args.total_frames,
-            seed=args.seed,
-            visualize_reward=False,
-            from_pixels=(args.encoder_type == 'pixel'),
-            height=args.image_size,
-            width=args.image_size,
-            frame_skip=args.action_repeat
-        )
-        env.seed(args.seed)
-
-        eval_env = dmc2gym.make(
-            domain_name=args.domain_name,
-            task_name=args.task_name,
-            resource_files=args.eval_resource_files,
-            img_source=args.img_source,
-            total_frames=args.total_frames,
-            seed=args.seed,
-            visualize_reward=False,
-            from_pixels=(args.encoder_type == 'pixel'),
-            height=args.image_size,
-            width=args.image_size,
-            frame_skip=args.action_repeat
-        )
+    eval_env = dmc2gym.make(
+        domain_name=args.domain_name,
+        task_name=args.task_name,
+        resource_files=args.eval_resource_files,
+        img_source=args.img_source,
+        total_frames=args.total_frames,
+        seed=args.seed,
+        visualize_reward=False,
+        from_pixels=(args.encoder_type == 'pixel'),
+        height=args.image_size,
+        width=args.image_size,
+        frame_skip=args.action_repeat
+    )
 
     # stack several consecutive frames together
     if args.encoder_type.startswith('pixel'):
@@ -355,94 +232,20 @@ def main():
 
     L = Logger(args.work_dir, use_tb=args.save_tb)
 
-    episode, episode_reward, done = 0, 0, True
-    start_time = time.time()
+    done = True
     for step in range(args.num_train_steps):
         if done:
-            if args.decoder_type == 'inverse':
-                for i in range(1, args.k):  # fill k_obs with 0s if episode is done
-                    replay_buffer.k_obses[replay_buffer.idx - i] = 0
-            if step > 0:
-                L.log('train/duration', time.time() - start_time, step)
-                start_time = time.time()
-                L.dump(step)
-
-            # evaluate agent periodically
-            if episode % args.eval_freq == 0:
-                L.log('eval/episode', episode, step)
-                evaluate(eval_env, agent, video, args.num_eval_episodes, L, step)
-                if args.save_model:
-                    agent.save(model_dir, step)
-                if args.save_buffer:
-                    replay_buffer.save(buffer_dir)
-
-            L.log('train/episode_reward', episode_reward, step)
-
             obs = env.reset()
             done = False
-            episode_reward = 0
-            episode_step = 0
-            episode += 1
-            reward = 0
-
-            L.log('train/episode', episode, step)
 
         # sample action for data collection
-        if step < args.init_steps:
-            action = env.action_space.sample()
-        else:
-            with utils.eval_mode(agent):
-                action = agent.sample_action(obs)
-
-        # run training update
-        if step >= args.init_steps:
-            num_updates = args.init_steps if step == args.init_steps else 1
-            for _ in range(num_updates):
-                agent.update(replay_buffer, L, step)
+        action = env.action_space.sample()
 
         curr_reward = reward
         next_obs, reward, done, _ = env.step(action)
 
-        # allow infinit bootstrap
-        done_bool = 0 if episode_step + 1 == env._max_episode_steps else float(
-            done
-        )
-        episode_reward += reward
-
-        replay_buffer.add(obs, action, curr_reward, reward, next_obs, done_bool)
-        np.copyto(replay_buffer.k_obses[replay_buffer.idx - args.k], next_obs)
-
         obs = next_obs
-        episode_step += 1
 
-
-def collect_data(env, agent, num_rollouts, path_length, checkpoint_path):
-    rollouts = []
-    for i in range(num_rollouts):
-        obses = []
-        acs = []
-        rews = []
-        observation = env.reset()
-        for j in range(path_length):
-            action = agent.sample_action(observation)
-            next_observation, reward, done, _ = env.step(action)
-            obses.append(observation)
-            acs.append(action)
-            rews.append(reward)
-            observation = next_observation
-        obses.append(next_observation)
-        rollouts.append((obses, acs, rews))
-
-    from scipy.io import savemat
-
-    savemat(
-        os.path.join(checkpoint_path, "dynamics-data.mat"),
-        {
-            "trajs": np.array([path[0] for path in rollouts]),
-            "acs": np.array([path[1] for path in rollouts]),
-            "rews": np.array([path[2] for path in rollouts])
-        }
-    )
 
 
 if __name__ == '__main__':

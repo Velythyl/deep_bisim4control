@@ -49,4 +49,6 @@ def make(
             },
             max_episode_steps=max_episode_steps
         )
-    return gym.make(env_id)
+    env = gym.make(env_id)
+    env.reset()
+    return env

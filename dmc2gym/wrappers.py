@@ -1,3 +1,6 @@
+import sys
+
+import cv2
 from gym import core, spaces
 import glob
 import os
@@ -126,7 +129,7 @@ class DMCWrapper(core.Env):
 
     def _get_obs(self, time_step):
         if self._from_pixels:
-            obs = self.render(
+            obs = self._render(
                 height=self._height,
                 width=self._width,
                 camera_id=self._camera_id
@@ -188,11 +191,27 @@ class DMCWrapper(core.Env):
         obs = self._get_obs(time_step)
         return obs
 
-    def render(self, mode='rgb_array', height=None, width=None, camera_id=0):
-        assert mode == 'rgb_array', 'only support rgb_array mode, given %s' % mode
+    def _render(self, mode='rgb_array', height=None, width=None, camera_id=0):
+        assert mode == 'rgb_array'
+
         height = height or self._height
         width = width or self._width
         camera_id = camera_id or self._camera_id
         return self._env.physics.render(
             height=height, width=width, camera_id=camera_id
         )
+
+    def render(self, mode='rgb_array', height=None, width=None, camera_id=0):
+        if self._from_pixels:
+            img = self._get_obs(0)
+            img = np.transpose(img, (1, 2, 0))
+        else:
+            img = self._render(mode, height, width, camera_id)
+
+        if mode == 'human':
+            assert self._from_pixels
+            cv2.imshow('debug render', img)
+            cv2.waitKey()
+            print("WARNING: USING RENDER WITH MODE=HUMAN", file=sys.stderr)
+
+        return img

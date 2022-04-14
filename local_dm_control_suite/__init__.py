@@ -23,7 +23,6 @@ import collections
 import inspect
 import itertools
 
-from dm_control.rl import control
 
 from local_dm_control_suite import acrobot
 from local_dm_control_suite import ball_in_cup
