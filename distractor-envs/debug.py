@@ -1,8 +1,8 @@
-import dmc2gym
+from maker import make
 
 # IGGNORE THIS FILE, JUST FOR DEBUGGING
 
-env = dmc2gym.make(
+env = make(
     domain_name="cheetah",   # env name, for example "cheetah"
     task_name="run",
     resource_files="distractors/train/*.mp4", # resource_files == disctractors??

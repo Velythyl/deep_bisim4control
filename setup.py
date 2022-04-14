@@ -19,7 +19,8 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Velythyl/distractor-envs",
     author="Charlie Gauthier",
+    packages=find_packages(),
     author_email="charlie.gauthier@umontreal.ca",
     license="CC-BY-NC 4.0",
-    install_requires=["dm_control", "gym", "opencv-python", "scikit-image", "scikit-video", "dm-env", 'matplotlib'],
+    install_requires=['wheel', "dm_control", "gym", "opencv-python", "scikit-image", "scikit-video", "dm-env", 'matplotlib'],
 )
