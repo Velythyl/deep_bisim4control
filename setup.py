@@ -12,7 +12,7 @@ README = (HERE / "README.md").read_text()
 
 # This call to setup() does all the work
 setup(
-    name="distractor-envs",
+    name="redherring",
     version="0.0.1",
     description="Standalone package of distractor environments used in https://github.com/facebookresearch/deep_bisim4control",
     long_description=README,

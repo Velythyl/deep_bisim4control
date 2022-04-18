@@ -1,2 +1,0 @@
-import distractor_envs
-import distractor_envs.distractor_envs
