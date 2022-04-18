@@ -1,6 +1,6 @@
-from maker import make
 
 # IGGNORE THIS FILE, JUST FOR DEBUGGING
+from redherring import make
 
 env = make(
     domain_name="cheetah",   # env name, for example "cheetah"
