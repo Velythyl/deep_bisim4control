@@ -4,10 +4,10 @@ import cv2
 from gym import core, spaces
 import glob
 import os
-import local_dm_control_suite as suite
 from dm_env import specs
 import numpy as np
 
+from redherring import local_dm_control_suite
 from redherring.distractor_source import RandomImageSource, RandomVideoSource, NoiseSource, RandomColorSource
 
 
@@ -67,7 +67,7 @@ class DMCWrapper(core.Env):
         self._img_source = distractor_type
 
         # create task
-        self._env = suite.load(
+        self._env = local_dm_control_suite.load(
             domain_name=robot_name,
             task_name=task_name,
             task_kwargs=task_kwargs,
