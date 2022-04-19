@@ -42,6 +42,8 @@ def _flatten_obs(obs):
 
 
 class DMCWrapper(core.Env):
+    metadata = {"render.modes": ["human", "rgb_array"], "video.frames_per_second": 30}
+
     def __init__(
         self,
         robot_name,
@@ -201,6 +203,7 @@ class DMCWrapper(core.Env):
         )
 
     def render(self, mode='rgb_array', height=None, width=None, camera_id=0):
+
         if self._from_pixels:
             img = self._get_obs(0)
             img = np.transpose(img, (1, 2, 0))
