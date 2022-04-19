@@ -24,7 +24,7 @@ import os
 # Internal dependencies.
 
 from absl.testing import absltest
-from local_dm_control_suite import humanoid_CMU
+from redherring.local_dm_control_suite import humanoid_CMU
 from dm_control.suite.utils import parse_amc
 
 from dm_control.utils import io as resources

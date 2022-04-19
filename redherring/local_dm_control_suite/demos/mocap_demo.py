@@ -32,7 +32,7 @@ import time
 from absl import app
 from absl import flags
 
-from local_dm_control_suite import humanoid_CMU
+from redherring.local_dm_control_suite import humanoid_CMU
 from dm_control.suite.utils import parse_amc
 
 import matplotlib.pyplot as plt

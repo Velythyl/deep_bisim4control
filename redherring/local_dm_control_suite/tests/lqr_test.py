@@ -28,8 +28,8 @@ from absl import logging
 from absl.testing import absltest
 from absl.testing import parameterized
 
-from local_dm_control_suite import lqr
-from local_dm_control_suite import lqr_solver
+from redherring.local_dm_control_suite import lqr
+from redherring.local_dm_control_suite import lqr_solver
 
 import numpy as np
 from six.moves import range

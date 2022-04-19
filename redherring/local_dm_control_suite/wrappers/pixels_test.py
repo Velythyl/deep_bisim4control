@@ -24,7 +24,7 @@ import collections
 # Internal dependencies.
 from absl.testing import absltest
 from absl.testing import parameterized
-from local_dm_control_suite import cartpole
+from redherring.local_dm_control_suite import cartpole
 from dm_control.suite.wrappers import pixels
 import dm_env
 from dm_env import specs
