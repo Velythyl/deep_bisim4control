@@ -1,1 +1,2 @@
 include redherring/local_dm_control_suite/*.xml
+include redherring/local_dm_control_suite/common/*.xml
