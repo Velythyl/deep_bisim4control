@@ -1,0 +1,1 @@
+include redherring/local_dm_control_suite/*.xml
