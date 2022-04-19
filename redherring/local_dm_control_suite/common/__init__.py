@@ -30,6 +30,13 @@ _FILENAMES = [
     "./common/visual.xml",
 ]
 
+def get_resource(path):
+    try:
+        return resources.GetResource(path)
+    except FileNotFoundError:
+        temp_path = path.replace("./common/", "/common/")
+        return resources.GetResource(temp_path)
+
 ASSETS = {filename: resources.GetResource(os.path.join(_SUITE_DIR, filename))
           for filename in _FILENAMES}
 
