@@ -17,7 +17,7 @@ You can download the Kinetics 400 dataset and grab the driving_car label from th
 by [the original paper](https://github.com/facebookresearch/deep_bisim4control). Of course, you may use any other video dataset.
 
 Some instructions for downloading the dataset can be found here: https://github.com/Showmax/kinetics-downloader. Just download
-it and drag-and-drop it to [distractors](distractor-envs/distractors).
+it and drag-and-drop it to [distractors](redherring/distractors).
 
 ## License
 

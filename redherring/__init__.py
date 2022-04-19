@@ -3,20 +3,20 @@ from gym.envs.registration import register
 
 
 def make(
-    domain_name,
-    task_name,
-    resource_files,
-    img_source,
-    total_frames,
-    seed=1,
-    visualize_reward=True,
-    from_pixels=False,
-    height=84,
-    width=84,
-    camera_id=0,
-    frame_skip=1,
-    episode_length=1000,
-    environment_kwargs=None
+        domain_name,
+        task_name,
+        resource_files,
+        img_source,
+        total_frames,
+        seed=1,
+        visualize_reward=True,
+        from_pixels=False,
+        height=84,
+        width=84,
+        camera_id=0,
+        frame_skip=1,
+        episode_length=1000,
+        environment_kwargs=None
 ):
     env_id = 'dmc_%s_%s_%s-v1' % (domain_name, task_name, seed)
 
@@ -29,7 +29,7 @@ def make(
     if not env_id in gym.envs.registry.env_specs:
         register(
             id=env_id,
-            entry_point='distractor-envs.wrappers:DMCWrapper',
+            entry_point='redherring.distractor_env:DMCWrapper',
             kwargs={
                 'robot_name': domain_name,
                 'task_name': task_name,

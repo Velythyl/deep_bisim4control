@@ -8,7 +8,7 @@ import local_dm_control_suite as suite
 from dm_env import specs
 import numpy as np
 
-from dmc2gym import natural_imgsource
+from redherring.distractor_source import RandomImageSource, RandomVideoSource, NoiseSource, RandomColorSource
 
 
 def _spec_to_box(spec):
@@ -105,18 +105,18 @@ class DMCWrapper(core.Env):
         if distractor_type is not None:
             shape2d = (height, width)
             if distractor_type == "color":
-                self._bg_source = natural_imgsource.RandomColorSource(shape2d)
+                self._bg_source = RandomColorSource(shape2d)
             elif distractor_type == "noise":
-                self._bg_source = natural_imgsource.NoiseSource(shape2d)
+                self._bg_source = NoiseSource(shape2d)
             else:
                 files = glob.glob(os.path.expanduser(distractor_files))
                 assert len(files), "Pattern {} does not match any files".format(
                     distractor_files
                 )
                 if distractor_type == "images":
-                    self._bg_source = natural_imgsource.RandomImageSource(shape2d, files, grayscale=True, total_frames=total_frames)
+                    self._bg_source = RandomImageSource(shape2d, files, grayscale=True, total_frames=total_frames)
                 elif distractor_type == "video":
-                    self._bg_source = natural_imgsource.RandomVideoSource(shape2d, files, grayscale=True, total_frames=total_frames)
+                    self._bg_source = RandomVideoSource(shape2d, files, grayscale=True, total_frames=total_frames)
                 else:
                     raise Exception("img_source %s not defined." % distractor_type)
 
