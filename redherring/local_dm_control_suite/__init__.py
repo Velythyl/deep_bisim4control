@@ -22,6 +22,27 @@ from __future__ import print_function
 import collections
 import inspect
 
+
+from redherring.local_dm_control_suite import acrobot
+from redherring.local_dm_control_suite import ball_in_cup
+from redherring.local_dm_control_suite import cartpole
+from redherring.local_dm_control_suite import cheetah
+from redherring.local_dm_control_suite import finger
+from redherring.local_dm_control_suite import fish
+from redherring.local_dm_control_suite import hopper
+from redherring.local_dm_control_suite import humanoid
+from redherring.local_dm_control_suite import humanoid_CMU
+from redherring.local_dm_control_suite import lqr
+from redherring.local_dm_control_suite import manipulator
+from redherring.local_dm_control_suite import pendulum
+from redherring.local_dm_control_suite import point_mass
+from redherring.local_dm_control_suite import quadruped
+from redherring.local_dm_control_suite import reacher
+from redherring.local_dm_control_suite import stacker
+from redherring.local_dm_control_suite import swimmer
+from redherring.local_dm_control_suite import walker
+
+
 # Find all domains imported.
 _DOMAINS = {name: module for name, module in locals().items()
             if inspect.ismodule(module) and hasattr(module, 'SUITE')}
