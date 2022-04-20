@@ -6,7 +6,7 @@ env = make(
     domain_name="cheetah",   # env name, for example "cheetah"
     task_name="run",
     resource_files="distractors/train/*.mp4", # resource_files == disctractors??
-    img_source='noise',#'video', # type of resource_files?
+    img_source='video',#'video', # type of resource_files?
     total_frames=1000,  # number of frames to get from image before it loops? idk
     seed=8,
     visualize_reward=False, # what is this
